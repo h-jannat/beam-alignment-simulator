@@ -8,4 +8,6 @@ def build_tx_codebook():
         num_ant=N_TX_ANT,
         oversmpl=OVERSAMPLING,
     )
+    print(f"TX DFT GoB codebook: {gob}")
+    print(f"DFT codebook shape: {gob.shape}")
     return gob  # complex64 tensor

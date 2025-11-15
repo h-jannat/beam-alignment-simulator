@@ -1,10 +1,13 @@
 # ----- System parameters -----
-BATCH_SIZE = 64          # Monte-Carlo realizations (channel drops)
+
+# BATCH_SIZE:  Monte-Carlo realizations (channel drops),
+#  different random small-scale fading realizations (different path phases, Doppler, etc.)
+BATCH_SIZE = 64          
 CARRIER_FREQUENCY = 28e9 # 28 GHz mmWave
 DELAY_SPREAD = 100e-9    # 100 ns, e.g. nominal UMi profile
 
 FFT_SIZE = 64            # OFDM FFT size
-N_SYM = 1                # Number of OFDM symbols (think: one SSB symbol)
+N_SYM = 1                # Number of OFDM symbols (think: one SSB symbol),  1 for simplicity
 SCS = 120e3              # Subcarrier spacing in Hz
 
 # Antenna config: gNB has 4x4 dual-pol panel => 32 elements

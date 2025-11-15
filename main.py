@@ -8,13 +8,13 @@ from utils.dft_codebook import build_tx_codebook
 def main():
     tf.random.set_seed(0)
 
-    # 1) Build resource grid
+    # 1) resource grid
     rg = build_resource_grid()
 
-    # 2) Build CDL-based OFDM channel (downlink)
+    # 2) CDL-based OFDM channel (downlink)
     channel_dl = build_cdl_channel(rg, direction="downlink")
 
-    # 3) Build DFT GoB codebook for BS
+    # 3)  DFT GoB codebook for BS
     tx_codebook = build_tx_codebook()
 
     # 4) Run beam sweeping

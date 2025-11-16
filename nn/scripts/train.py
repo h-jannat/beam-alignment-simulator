@@ -26,26 +26,22 @@ codebook_tx   = tf.Variable(codebook_init,
 
 optimizer = tf.keras.optimizers.Adam(1e-3)
 
+# Build the static OFDM resources once in eager mode to avoid tf.function issues
+RESOURCE_GRID = build_resource_grid()
+CHANNEL_DL = build_cdl_channel(RESOURCE_GRID, direction="downlink")
+
 @tf.function
 def train_step():
     with tf.GradientTape() as tape:
-         # 1) resource grid
-        rg = build_resource_grid()
-
-    # 2) CDL-based OFDM channel (downlink)
-        channel_dl = build_cdl_channel(rg, direction="downlink")
         x = tf.zeros(
-        [BATCH_SIZE, 1, N_TX_ANT, rg.num_ofdm_symbols, rg.fft_size],
-        dtype=tf.complex64,
-    )
+            [BATCH_SIZE, 1, N_TX_ANT,
+             RESOURCE_GRID.num_ofdm_symbols,
+             RESOURCE_GRID.fft_size],
+            dtype=tf.complex64,
+        )
 
-    # Make sure OFDMChannel returns the channel
-        channel_dl._return_channel = True  # public API has "return_channel" at init, this enforces it
-
-    # Call channel: y, h_freq
-    # 'no' is the noise variance used for AWGN; with 0 we get noise-free channel
-        _, h_freq = channel_dl(x, noise_variance=0.0)
- 
+        # Call channel: y, h_freq (noise_variance=0 gives noise-free realizations)
+        _, h_freq = CHANNEL_DL(x, no=0.0)
 
         # 2) Narrowband equivalent H_nb: [B, N_RX_ANT, N_TX_ANT]
         H = h_freq[:, 0, :, 0, :, 0, :]          # [B, N_RX, N_TX, FFT]
@@ -53,7 +49,7 @@ def train_step():
         H_nb = tf.reduce_mean(H, axis=2)         # [B, N_RX, N_TX]
 
         # 3) Unrolled beam alignment (NN controllers + codebook)
-        bf_gain_norm, logs = unroll_ba(
+        bf_gain_norm = unroll_ba(
             H_nb,
             ue_ctrl,
             bs_ctrl,

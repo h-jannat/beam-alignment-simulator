@@ -41,7 +41,7 @@ class UEController(tf.keras.Model):
 
         # Normalize to unit norm
         w_norm = tf.sqrt(tf.reduce_sum(tf.abs(w_complex)**2, axis=-1, keepdims=True) + 1e-9)
-        w_complex = w_complex / w_norm
+        w_complex = w_complex / tf.cast(w_norm, w_complex.dtype)
 
         return w_complex, h_new
 
@@ -52,7 +52,7 @@ class UEController(tf.keras.Model):
         w_real, w_imag = tf.split(w_logits, 2, axis=-1)
         w_T = tf.complex(w_real, w_imag)
         w_norm = tf.sqrt(tf.reduce_sum(tf.abs(w_T)**2, axis=-1, keepdims=True) + 1e-9)
-        w_T = w_T / w_norm
+        w_T = w_T / tf.cast(w_norm, w_T.dtype)
 
         m_FB = self.dense_fb(out)   # [B, n_fb], real
 

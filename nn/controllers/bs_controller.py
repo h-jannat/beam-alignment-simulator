@@ -33,6 +33,7 @@ class BSController(tf.keras.Model):
             f_complex = tf.complex(self.codebook_real, self.codebook_imag)
         # normalize rows
         norm = tf.sqrt(tf.reduce_sum(tf.abs(f_complex)**2, axis=-1, keepdims=True) + 1e-9)
+        norm = tf.cast(norm, f_complex.dtype)
         return f_complex / norm  # [N_cb, N_tx]
 
     def get_fw_from_index(self, idx):
@@ -47,4 +48,5 @@ class BSController(tf.keras.Model):
         f_real, f_imag = tf.split(logits, 2, axis=-1)
         f_T = tf.complex(f_real, f_imag)
         norm = tf.sqrt(tf.reduce_sum(tf.abs(f_T)**2, axis=-1, keepdims=True) + 1e-9)
+        norm = tf.cast(norm, f_T.dtype)
         return f_T / norm

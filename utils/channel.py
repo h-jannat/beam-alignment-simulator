@@ -61,8 +61,9 @@ def build_cdl_channel(rg, direction="downlink"):
 
     channel = OFDMChannel(
         channel_model=cdl,
-        resource_grid=rg
-        # Other args (add_awgn, normalize_channel, return_channel, etc.) are left at defaults
+        resource_grid=rg,
+        return_channel=True,  # always expose the sampled channel response
+        # Other args (add_awgn, normalize_channel, etc.) are left at defaults
     )
 
     return channel

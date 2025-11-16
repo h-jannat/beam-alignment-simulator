@@ -41,7 +41,7 @@ def eval_batch():
     H_nb = tf.reduce_mean(H, axis=2)
 
     # NN-based BA
-    bf_gain_nn, logs = unroll_ba(
+    bf_gain_nn = unroll_ba(
         H_nb, ue_ctrl, bs_ctrl,
         T=T_STEPS,
         snr_db=SNR_dB_test,
